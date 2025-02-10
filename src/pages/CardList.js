@@ -3,7 +3,7 @@ import axios from 'axios'
 
 import { AiOutlinePlus } from "react-icons/ai"; // Add icon
 
-import { motion, AnimatePresence } from "framer-motion";
+import {  AnimatePresence } from "framer-motion";
 import Card from '../components/Card';
 const CardList = () => {
 
@@ -59,29 +59,68 @@ const CardList = () => {
             console.error(error)
         }
     }
+
+    // Add New Card
+    const handleAdd = () => {
+        let tempState = state;
+        //creating new item 
+        const newItem = [{
+            id: Date.now(),
+            author: `New Image ${state.cardsData.length + 1}`,
+            download_url: `https://picsum.photos/id/${Math.floor(Math.random() * (10 - 0) + 0)}/5000/3333`,
+            width: 5000,
+        }];
+
+        //updating the state with newly created item
+        tempState['cardsData'] = [...newItem, ...tempState.cardsData];
+
+
+        dispatch({
+            type: "commonUpdate",
+            payload: tempState,
+        });
+    };
+
+    // Delete Card
+    const handleDelete = (id) => {
+        let tempState = state;
+        //deleting the selected item from the state
+        let newList = tempState?.cardsData?.filter((item) => item.id !== id)
+        tempState['cardsData'] = newList;
+
+        dispatch({
+            type: "commonUpdate",
+            payload: tempState,
+        });
+    };
+
     console.log("state", state)
     return (
+        <div className="container mx-auto p-4 flex flex-col items-center justify-start">
 
-        <div className="container mx-auto p-4">
-            <div className="flex justify-between items-center mb-4">
-                <h1 className="text-xl font-bold">Image Gallery</h1>
-                <button
+        <div className="flex justify-between items-center w-full max-w-3xl mb-6">
+            <h2 className="text-lg font-semibold text-gray-700">Image Gallery</h2>
+            <button
+                onClick={handleAdd}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 text-sm rounded flex items-center"
+            >
+                <AiOutlinePlus className="mr-1" /> Add Card
+            </button>
+        </div>
 
-                    className="bg-blue-500 text-white px-4 py-2 text-sm rounded"
-                >
-                    <AiOutlinePlus /> Add Card
-                </button>
-            </div>
-
-            {/* Responsive Grid Layout */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {/* No Items Message */}
+        {state?.cardsData?.length === 0 ? (
+            <div className="text-gray-500 text-lg font-semibold mt-4">No items available</div>
+        ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-5xl">
                 <AnimatePresence>
                     {state?.cardsData?.map((item) => (
-                        <Card key={item.id} item={item} />
+                        <Card key={item.id} item={item} handleDelete={handleDelete} />
                     ))}
                 </AnimatePresence>
             </div>
-        </div>
+        )}
+    </div>
     )
 }
 
