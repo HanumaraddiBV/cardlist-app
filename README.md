@@ -34,7 +34,7 @@ npm install
 npm start
 ```
 ### 4. View in Browser
-Open http://localhost:5173
+Open http://localhost:3001
 
 ## 🏗️ How It Works  
 
